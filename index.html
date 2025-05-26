@@ -1,38 +1,151 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Terabox Player</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
+    :root {
+      --bg-color: #0f172a;
+      --text-color: #f1f5f9;
+      --accent: #38bdf8;
+    }
     body {
-      font-family: sans-serif;
-      text-align: center;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       padding: 20px;
+      margin: 0;
+      min-height: 100vh;
+    }
+    h2 {
+      color: var(--accent);
+      margin-bottom: 10px;
     }
     iframe {
-      width: 95%;
-      height: 500px;
-      border: none;
+      width: 100%;
+      max-width: 900px;
+      height: 520px;
+      border: 2px solid var(--accent);
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
       margin-top: 20px;
+    }
+    .message {
+      font-size: 1.1em;
+      margin-top: 20px;
+      color: #facc15;
+    }
+    #inputSection {
+      margin-top: 30px;
+      display: flex;
+      gap: 10px;
+      width: 100%;
+      max-width: 900px;
+      justify-content: center;
+    }
+    #urlInput {
+      flex-grow: 1;
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: none;
+      font-size: 1em;
+      outline: none;
+      box-shadow: inset 0 0 5px rgba(56, 189, 248, 0.5);
+    }
+    #loadBtn {
+      background-color: var(--accent);
+      border: none;
+      border-radius: 8px;
+      color: var(--bg-color);
+      font-weight: bold;
+      font-size: 1em;
+      padding: 12px 20px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    #loadBtn:hover {
+      background-color: #0ea5e9;
+    }
+    @media (max-width: 600px) {
+      iframe {
+        height: 350px;
+      }
+      #inputSection {
+        flex-direction: column;
+        gap: 15px;
+      }
+      #loadBtn {
+        width: 100%;
+      }
     }
   </style>
 </head>
 <body>
-  <h2>Terabox Player</h2>
+  <h2>Terabox Video Player</h2>
   <div id="frameWrap"></div>
 
+  <div id="inputSection" style="display:none;">
+    <input
+      type="url"
+      id="urlInput"
+      placeholder="Enter or paste a video URL here"
+      aria-label="Video URL input"
+    />
+    <button id="loadBtn">Load Video</button>
+  </div>
+
   <script>
+    const frameWrap = document.getElementById("frameWrap");
+    const inputSection = document.getElementById("inputSection");
+    const urlInput = document.getElementById("urlInput");
+    const loadBtn = document.getElementById("loadBtn");
+
+    function isValidUrl(string) {
+      try {
+        new URL(string);
+        return true;
+      } catch {
+        return false;
+      }
+    }
+
+    function loadIframe(url) {
+      const embedUrl = `https://player.teraboxfast.com/terabox/?q=${encodeURIComponent(
+        url
+      )}`;
+      frameWrap.innerHTML = `<iframe src="${embedUrl}" allowfullscreen></iframe>`;
+      inputSection.style.display = "none";
+    }
+
     const urlParams = new URLSearchParams(window.location.search);
     const shareUrl = urlParams.get("q");
 
-    if (shareUrl && shareUrl.startsWith("https://")) {
-      const embedUrl = `https://player.teraboxfast.com/terabox/?q=${encodeURIComponent(shareUrl)}`;
-      document.getElementById("frameWrap").innerHTML = `<iframe src="${embedUrl}" allowfullscreen></iframe>`;
+    if (shareUrl && isValidUrl(shareUrl)) {
+      loadIframe(shareUrl);
     } else {
-      document.getElementById("frameWrap").innerHTML = `<p>Invalid or missing link.</p>`;
+      frameWrap.innerHTML =
+        '<div class="message">No valid link provided. Please enter a URL below.</div>';
+      inputSection.style.display = "flex";
     }
 
-    // Optional: Expand for Telegram WebApp
+    loadBtn.addEventListener("click", () => {
+      const userUrl = urlInput.value.trim();
+      if (!userUrl) {
+        alert("Please enter a URL!");
+        return;
+      }
+      if (!isValidUrl(userUrl)) {
+        alert("Please enter a valid URL!");
+        return;
+      }
+      loadIframe(userUrl);
+    });
+
+    // Telegram WebApp expand
     if (window.Telegram && Telegram.WebApp) {
       Telegram.WebApp.expand();
     }
