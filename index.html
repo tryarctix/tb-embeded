@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Terabox Player</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    iframe {
+      width: 95%;
+      height: 500px;
+      border: none;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Terabox Player</h2>
+  <div id="frameWrap"></div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const shareUrl = urlParams.get("q");
+
+    if (shareUrl && shareUrl.startsWith("https://")) {
+      const embedUrl = `https://player.teraboxfast.com/terabox/?q=${encodeURIComponent(shareUrl)}`;
+      document.getElementById("frameWrap").innerHTML = `<iframe src="${embedUrl}" allowfullscreen></iframe>`;
+    } else {
+      document.getElementById("frameWrap").innerHTML = `<p>Invalid or missing link.</p>`;
+    }
+
+    // Optional: Expand for Telegram WebApp
+    if (window.Telegram && Telegram.WebApp) {
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>
