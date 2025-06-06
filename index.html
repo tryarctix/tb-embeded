@@ -5,6 +5,14 @@
   <title>🎬 Terabox Video Player</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome CDN -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    integrity="sha512-papbWb4Ax+aMYqfG6lR9VvciRv5y2YvX7hq5XHZixs+R51KwDcgCDZ0q4ghqP3J4LVw09+Oka3qUB9zYk0f+IQ=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -17,7 +25,7 @@
   <header class="sticky top-0 z-10 w-full bg-black/60 dark:bg-white/50 backdrop-blur p-4 flex justify-between items-center shadow-md">
     <h1 class="text-xl font-bold text-sky-400 dark:text-sky-600">🎬 Terabox Player</h1>
     <button id="themeToggle" class="text-sm bg-slate-800 dark:bg-slate-200 text-white dark:text-black px-3 py-1 rounded-full hover:scale-105 transition">
-      🌙 Toggle
+      <i class="fas fa-moon"></i> Toggle
     </button>
   </header>
 
@@ -42,13 +50,18 @@
       <div class="flex flex-col sm:flex-row gap-2">
         <button
           id="loadBtn"
-          class="flex-1 bg-sky-500 hover:bg-sky-600 text-slate-900 font-semibold py-3 rounded-md transition">
-          🚀 Load
+          class="flex-1 bg-sky-500 hover:bg-sky-600 text-slate-900 font-semibold py-3 rounded-md transition flex items-center justify-center gap-2">
+          <i class="fas fa-rocket"></i> Load
         </button>
         <button
           id="copyBtn"
-          class="sm:w-40 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-3 rounded-md transition">
-          🔗 Copy
+          class="sm:w-40 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-3 rounded-md transition flex items-center justify-center gap-2">
+          <i class="fas fa-link"></i> Copy URL
+        </button>
+        <button
+          id="copyEmbedBtn"
+          class="sm:w-44 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded-md transition flex items-center justify-center gap-2">
+          <i class="fas fa-code"></i> Copy Embed Link
         </button>
       </div>
     </div>
@@ -62,21 +75,24 @@
   <!-- Script -->
   <script>
     const frameWrap = document.getElementById("frameWrap");
-    const inputSection = document.getElementById("inputSection");
     const urlInput = document.getElementById("urlInput");
     const loadBtn = document.getElementById("loadBtn");
     const copyBtn = document.getElementById("copyBtn");
+    const copyEmbedBtn = document.getElementById("copyEmbedBtn");
     const themeToggle = document.getElementById("themeToggle");
+
+    let currentEmbedUrl = ""; // Store current embed iframe URL
 
     const loadIframe = (url) => {
       if (!isValidUrl(url)) {
         frameWrap.innerHTML = `<div class="text-yellow-400 py-10">Invalid URL format. Paste a proper Terabox link 👇</div>`;
+        currentEmbedUrl = "";
         return;
       }
-      const embedUrl = `https://player.teraboxfast.com/terabox/?q=${encodeURIComponent(url)}`;
+      currentEmbedUrl = `https://player.teraboxfast.com/terabox/?q=${encodeURIComponent(url)}`;
       frameWrap.innerHTML = `
         <iframe
-          src="${embedUrl}"
+          src="${currentEmbedUrl}"
           allowfullscreen
           class="w-full h-[240px] sm:h-[360px] md:h-[500px] border-none rounded-lg shadow-lg hover:scale-[1.01] transition-transform"
         ></iframe>`;
@@ -109,12 +125,20 @@
       loadIframe(userUrl);
     });
 
-    // Copy
+    // Copy raw URL from input
     copyBtn.addEventListener("click", () => {
       const url = urlInput.value.trim();
       if (!url) return alert("Please enter a URL first!");
       navigator.clipboard.writeText(url).then(() => {
         alert("✅ URL copied!");
+      });
+    });
+
+    // Copy embed iframe URL
+    copyEmbedBtn.addEventListener("click", () => {
+      if (!currentEmbedUrl) return alert("No embed link available to copy!");
+      navigator.clipboard.writeText(`<iframe src="${currentEmbedUrl}" allowfullscreen class="w-full h-[240px] sm:h-[360px] md:h-[500px] border-none rounded-lg shadow-lg"></iframe>`).then(() => {
+        alert("✅ Embed link copied!");
       });
     });
 
