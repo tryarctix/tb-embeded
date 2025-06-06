@@ -1,193 +1,134 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
-  <title>Terabox Video Player</title>
+  <title>🎬 Terabox Video Player</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    :root {
-      --bg-color: #0f172a;
-      --text-color: #f8fafc;
-      --accent: #38bdf8;
-      --card-bg: rgba(255, 255, 255, 0.05);
-      --glass-blur: blur(10px);
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
     }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-    }
-
-    h2 {
-      color: var(--accent);
-      font-size: 2rem;
-      margin-bottom: 20px;
-      text-align: center;
-    }
-
-    .card {
-      background: var(--card-bg);
-      border: 1px solid rgba(56, 189, 248, 0.2);
-      border-radius: 16px;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
-      backdrop-filter: var(--glass-blur);
-      padding: 20px;
-      width: 100%;
-      max-width: 960px;
-      transition: all 0.3s ease;
-    }
-
-    iframe {
-      width: 100%;
-      height: 520px;
-      border: none;
-      border-radius: 12px;
-      box-shadow: 0 0 20px rgba(56, 189, 248, 0.25);
-      transition: transform 0.2s ease;
-    }
-
-    iframe:hover {
-      transform: scale(1.01);
-    }
-
-    .message {
-      font-size: 1.1em;
-      color: #facc15;
-      text-align: center;
-      margin-top: 10px;
-    }
-
-    #inputSection {
-      display: none;
-      margin-top: 20px;
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    #urlInput {
-      flex: 1;
-      min-width: 250px;
-      padding: 12px 16px;
-      border-radius: 10px;
-      border: none;
-      font-size: 1rem;
-      background-color: rgba(255, 255, 255, 0.1);
-      color: var(--text-color);
-      outline: none;
-      transition: box-shadow 0.3s ease;
-    }
-
-    #urlInput:focus {
-      box-shadow: 0 0 0 2px var(--accent);
-    }
-
-    #loadBtn {
-      background-color: var(--accent);
-      color: var(--bg-color);
-      font-weight: 600;
-      font-size: 1rem;
-      padding: 12px 20px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    #loadBtn:hover {
-      background-color: #0ea5e9;
-    }
-
-    @media (max-width: 768px) {
-      iframe {
-        height: 380px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      iframe {
-        height: 300px;
-      }
-
-      #inputSection {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      #loadBtn {
-        width: 100%;
-      }
-    }
-  </style>
+  </script>
 </head>
-<body>
-  <h2>🎬 Terabox Video Player</h2>
+<body class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 dark:from-white dark:via-slate-100 dark:to-white text-white dark:text-slate-900 min-h-screen flex flex-col">
 
-  <div class="card">
-    <div id="frameWrap">
-      <div class="message">No valid link provided. Please enter a URL below.</div>
+  <!-- Sticky Header -->
+  <header class="sticky top-0 z-10 w-full bg-black/60 dark:bg-white/50 backdrop-blur p-4 flex justify-between items-center shadow-md">
+    <h1 class="text-xl font-bold text-sky-400 dark:text-sky-600">🎬 Terabox Player</h1>
+    <button id="themeToggle" class="text-sm bg-slate-800 dark:bg-slate-200 text-white dark:text-black px-3 py-1 rounded-full hover:scale-105 transition">
+      🌙 Toggle
+    </button>
+  </header>
+
+  <!-- Main Section -->
+  <main class="flex-grow flex flex-col items-center px-4 py-6">
+    
+    <!-- Video Display -->
+    <section class="w-full max-w-xl bg-white/5 dark:bg-black/10 border border-white/10 dark:border-black/10 backdrop-blur-lg shadow-xl rounded-xl p-4">
+      <div id="frameWrap" class="overflow-hidden rounded-xl text-center text-yellow-400 py-10">
+        No valid link provided. Paste a URL below 👇
+      </div>
+    </section>
+
+    <!-- Input Controls -->
+    <div id="inputSection" class="mt-6 w-full max-w-xl flex flex-col gap-3">
+      <input
+        type="url"
+        id="urlInput"
+        placeholder="https://www.terabox.com/s/your-video-link"
+        class="w-full px-4 py-3 rounded-md bg-white/10 dark:bg-black/10 text-white dark:text-black placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
+      />
+      <div class="flex flex-col sm:flex-row gap-2">
+        <button
+          id="loadBtn"
+          class="flex-1 bg-sky-500 hover:bg-sky-600 text-slate-900 font-semibold py-3 rounded-md transition">
+          🚀 Load
+        </button>
+        <button
+          id="copyBtn"
+          class="sm:w-40 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-3 rounded-md transition">
+          🔗 Copy
+        </button>
+      </div>
     </div>
-  </div>
+  </main>
 
-  <div id="inputSection">
-    <input
-      type="url"
-      id="urlInput"
-      placeholder="Paste a Terabox video URL here"
-      aria-label="Video URL input"
-    />
-    <button id="loadBtn">Load Video</button>
-  </div>
+  <!-- Sticky Footer -->
+  <footer class="sticky bottom-0 w-full text-xs text-slate-400 dark:text-slate-600 text-center py-3 bg-black/40 dark:bg-white/30 backdrop-blur">
+    Built by Arctix ⚡ | Tailwind Powered | Live Preview Enabled
+  </footer>
 
+  <!-- Script -->
   <script>
     const frameWrap = document.getElementById("frameWrap");
     const inputSection = document.getElementById("inputSection");
     const urlInput = document.getElementById("urlInput");
     const loadBtn = document.getElementById("loadBtn");
+    const copyBtn = document.getElementById("copyBtn");
+    const themeToggle = document.getElementById("themeToggle");
 
-    function isValidUrl(string) {
+    const loadIframe = (url) => {
+      if (!isValidUrl(url)) {
+        frameWrap.innerHTML = `<div class="text-yellow-400 py-10">Invalid URL format. Paste a proper Terabox link 👇</div>`;
+        return;
+      }
+      const embedUrl = `https://player.teraboxfast.com/terabox/?q=${encodeURIComponent(url)}`;
+      frameWrap.innerHTML = `
+        <iframe
+          src="${embedUrl}"
+          allowfullscreen
+          class="w-full h-[240px] sm:h-[360px] md:h-[500px] border-none rounded-lg shadow-lg hover:scale-[1.01] transition-transform"
+        ></iframe>`;
+    };
+
+    const isValidUrl = (string) => {
       try {
         new URL(string);
         return true;
       } catch {
         return false;
       }
-    }
+    };
 
-    function loadIframe(url) {
-      const embedUrl = `https://player.teraboxfast.com/terabox/?q=${encodeURIComponent(url)}`;
-      frameWrap.innerHTML = `<iframe src="${embedUrl}" allowfullscreen></iframe>`;
-      inputSection.style.display = "none";
-    }
-
+    // Load from query param
     const urlParams = new URLSearchParams(window.location.search);
     const shareUrl = urlParams.get("q");
-
     if (shareUrl && isValidUrl(shareUrl)) {
       loadIframe(shareUrl);
     } else {
-      inputSection.style.display = "flex";
+      setTimeout(() => urlInput.focus(), 100);
     }
 
+    // Manual Load
     loadBtn.addEventListener("click", () => {
       const userUrl = urlInput.value.trim();
       if (!userUrl) return alert("Please enter a URL!");
-      if (!isValidUrl(userUrl)) return alert("Please enter a valid URL!");
+      if (!isValidUrl(userUrl)) return alert("Invalid URL format!");
       loadIframe(userUrl);
     });
 
+    // Copy
+    copyBtn.addEventListener("click", () => {
+      const url = urlInput.value.trim();
+      if (!url) return alert("Please enter a URL first!");
+      navigator.clipboard.writeText(url).then(() => {
+        alert("✅ URL copied!");
+      });
+    });
+
+    // Live Preview
+    urlInput.addEventListener("input", () => {
+      const val = urlInput.value.trim();
+      if (val && isValidUrl(val)) loadIframe(val);
+    });
+
+    // Theme toggle
+    themeToggle.addEventListener("click", () => {
+      document.documentElement.classList.toggle("dark");
+    });
+
+    // Telegram Web App Expand
     if (window.Telegram && Telegram.WebApp) {
       Telegram.WebApp.expand();
     }
