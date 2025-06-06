@@ -95,6 +95,7 @@
     const urlParams = new URLSearchParams(window.location.search);
     const shareUrl = urlParams.get("q");
     if (shareUrl && isValidUrl(shareUrl)) {
+      urlInput.value = shareUrl;
       loadIframe(shareUrl);
     } else {
       setTimeout(() => urlInput.focus(), 100);
